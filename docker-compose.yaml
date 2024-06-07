@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  mongodb:
+    image: "mongo"
+    volumes:
+      - data:/data/db
+    # if you want to specify your env variables in the yaml file
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: bill
+    #   MONGO_INITDB_ROOT_PASSWORD: secret
+      # alternative syntax is below:
+      # - MONGO_INITDB_ROOT_USERNAME=bill
+    # if you want to store your env variables in a separate file
+    env_file:
+      - ./env/mongo.env
+  # backend:
+
+  # frontend:
+
+volumes:
+  data:
