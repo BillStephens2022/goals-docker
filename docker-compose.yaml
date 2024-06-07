@@ -13,9 +13,38 @@ services:
     # if you want to store your env variables in a separate file
     env_file:
       - ./env/mongo.env
-  # backend:
-
-  # frontend:
+  backend:
+    build: ./backend
+    # alternate way to build, you can use a custom named dockerfile if you want.  you can also use args.
+    # build:
+    #   context: ./backend
+    #   dockerfile: Dockerfile
+    #   args:
+    #     some-arg: 1
+    ports:  
+      - "80:80"  # hostport:container-internal-port
+    volumes:
+      - logs:/app/logs
+      - ./backend:/app  # bind ./backend folder to the /app folder in the container
+      - /app/node_modules  #anonymous volume
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      # backend container depends on the mongodb container to be up and running.  Therefore backend will wait for mongodb to be up & running first
+      - mongodb
+  frontend:
+    build: ./frontend
+    ports: 
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    # the two options below are in place of the '-it' flags when using docker command line for interactive / terminal.  often used for react front ends
+    stdin_open: true  # lets docker know that this service needs an open input connection
+    tty: true # attaching a terminal
+    depends_on:
+      - backend
 
 volumes:
+  # note: only add namned volumes, not bind mounts or anonymous volumes
   data:
+  logs:
